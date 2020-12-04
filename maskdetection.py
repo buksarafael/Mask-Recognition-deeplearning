@@ -2,8 +2,9 @@
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
-import torch
+import torch as pt
 import cv2
+from model_define import DetectorTrainer
 
 # pandas data organization
 dataset_path = Path('@/datasets')
@@ -33,16 +34,17 @@ class MaskSet(pd.Dataset()):
 
     def __init__(self, df):
         self.data_frame = df
-        self.transformations = Compose([
-            ToPILImage(),
-            Resize((100, 100)),
-            ToTensor()
+        self.transformations = pd.Compose([
+            pd.ToPILImage(),
+            pd.Resize((100, 100)),
+            pd.ToTensor()
         ])
 
     def __getitem__(self, key):
         row = self.data_frame.iloc[key]
 
-        return {"image": self.transformations(row["image"]), "mask": tensor([row["mask"]], dtype=long)}
+        return {"image": self.transformations(row["image"]), "mask": pt.tensor([row["mask"]], dtype=pt.long)}
 
     def __len__(self):
         return len(self.data_frame.index)
+

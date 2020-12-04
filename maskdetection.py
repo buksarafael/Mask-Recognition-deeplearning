@@ -1,50 +1,30 @@
 # imports
-from pathlib import Path
-import pandas as pd
-from tqdm import tqdm
-import torch as pt
+from torch.utils.data.dataset import Dataset
+from torchvision.transforms import Compose, ToPILImage, Resize, ToTensor
+from torch import long, tensor
+import numpy as np
 import cv2
-from model_define import DetectorTrainer
-
-# pandas data organization
-dataset_path = Path('@/datasets')
-mask_path = dataset_path / 'AFDB_masked_face_dataset'
-no_mask_path = dataset_path / 'AFDB_face_dataset'
-
-mask_data_frame = pd.DataFrame()
-
-# parse no mask images and set 0 to the "mask" value
-for subj in tqdm(list(no_mask_path.iterdir()), desc="photos that have no masks on"):
-    for image_path in subj.iterdir():
-        img = cv2.imread(str(image_path))
-        mask_data_frame = mask_data_frame.append({"image": img, "mask": 0}, ignore_index=True)
-
-# parse mask images and set 1 to the "mask" value
-for subj in tqdm(list(mask_path.iterdir()), desc="photos that have masks on"):
-    for image_path in subj.iterdir():
-        img = cv2.imread(str(image_path))
-        mask_data_frame = mask_data_frame.append({"image": img, "mask": 1}, ignore_index=True)
-
-mask_data_frame.to_pickle("@/data/mask_dataframe.pickle")
 
 
-# build the dataset
-# convert into Tensor so that PyTorch can manipulate it
-class MaskSet(pd.Dataset()):
+class MaskSet(Dataset):
 
-    def __init__(self, df):
-        self.data_frame = df
-        self.transformations = pd.Compose([
-            pd.ToPILImage(),
-            pd.Resize((100, 100)),
-            pd.ToTensor()
+    def __init__(self, data_frame):
+        self.data_frame = data_frame
+
+        self.transformations = Compose([
+            ToPILImage(),
+            Resize((100, 100)),
+            ToTensor()
         ])
 
     def __getitem__(self, key):
-        row = self.data_frame.iloc[key]
+        if isinstance(key, slice):
+            raise NotImplementedError('slicing is not supported')
 
-        return {"image": self.transformations(row["image"]), "mask": pt.tensor([row["mask"]], dtype=pt.long)}
+        row = self.data_frame.iloc[key]
+        image = cv2.imdecode(np.fromfile(row['image'], dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+
+        return {"image": self.transformations(image), "mask": tensor([row["mask"]], dtype=long)}
 
     def __len__(self):
         return len(self.data_frame.index)
-

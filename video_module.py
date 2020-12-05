@@ -2,6 +2,8 @@
 # python detect_faces_video.py --prototxt deploy.prototxt.txt --model res10_300x300_ssd_iter_140000.caffemodel
 
 # import the necessary packages
+from pathlib import Path
+
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
@@ -33,7 +35,7 @@ labelColor = [(10, 0, 255), (10, 255, 0)]
 
 # load our serialized model from disk
 print("[INFO] loading model...")
-maskNet = load_model("checkpoints/mask_detector.model")
+maskNet = load_model(Path("checkpoints/mask_detector.model"))
 
 # initialize the video stream and allow the camera sensor to warmup
 print("[INFO] starting video stream...")

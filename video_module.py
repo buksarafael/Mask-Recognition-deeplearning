@@ -21,21 +21,13 @@ from model_define import DetectorTrainer
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-f", "--face", type=str,
-	default="face_detector",
-	help="path to face detector model directory")
-ap.add_argument("-m", "--model", type=str,
-	default="mask_detector.model",
-	help="path to trained face mask detector model")
-ap.add_argument("-c", "--confidence", type=float, default=0.5,
-	help="minimum probability to filter weak detections")
+ap.add_argument("-p", "--prototxt", required=True, help="path to Caffe 'deploy' prototxt file")
+ap.add_argument("-m", "--model", required=True, help="path to Caffe pre-trained model")
+ap.add_argument("-m2", "--model2", required=True, help="path to Tensoflow model")
+ap.add_argument("-c", "--confidence", type=float, default=0.5,help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
 
-prototxtPath = os.path.sep.join([args["face"], "deploy.prototxt"])
-weightsPath = os.path.sep.join([args["face"],
-	"res10_300x300_ssd_iter_140000.caffemodel"])
-
-face_detector = FaceDetector(prototxtPath, weightsPath)
+face_detector = FaceDetector(args["prototxt"], args["model"])
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 labels = ['Mask Off', 'Mask On']
@@ -43,7 +35,7 @@ labelColor = [(10, 0, 255), (10, 255, 0)]
 
 # load our serialized model from disk
 print("[INFO] loading model...")
-maskNet = load_model(args["model"])
+maskNet = load_model(args["model2"])
 
 # initialize the video stream and allow the camera sensor to warmup
 print("[INFO] starting video stream...")

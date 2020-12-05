@@ -2,6 +2,9 @@
 # python detect_faces_video.py --prototxt deploy.prototxt.txt --model res10_300x300_ssd_iter_140000.caffemodel
 
 # import the necessary packages
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.models import load_model
 from torchvision.transforms import Compose, Resize, ToPILImage, ToTensor
 from imutils.video import VideoStream
 import numpy as np
@@ -20,19 +23,9 @@ ap.add_argument("-m", "--model", required=True, help="path to Caffe pre-trained 
 ap.add_argument("-c", "--confidence", type=float, default=0.5,help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
 
-model = DetectorTrainer()
-model.load_state_dict(torch.load("checkpoints/weights.ckpt-v0.ckpt")["state_dict"], strict = False)
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-model = model.to(device)
-model.eval()
+
 
 face_detector = FaceDetector(args["prototxt"], args["model"])
-
-transformations = Compose([
-	ToPILImage(),
-	Resize((100, 100)),
-	ToTensor(),
-])
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 labels = ['Mask Off', 'Mask On']
@@ -40,8 +33,9 @@ labelColor = [(10, 0, 255), (10, 255, 0)]
 
 # load our serialized model from disk
 print("[INFO] loading model...")
+maskNet = load_model("checkpoints/mask_detector1k.model")
 
-# initialize the video stream and allow the cammera sensor to warmup
+# initialize the video stream and allow the camera sensor to warmup
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
@@ -64,8 +58,8 @@ while True:
 
 		# predict mask label on extracted face
 		faceImg = frame[yStart:yStart + height, xStart:xStart + width]
-		output = model(transformations(faceImg).unsqueeze(0).to(device))
-		_, predicted = torch.max(output.data, 1)
+		maskNet.setInput(faceImg)
+		predicted = maskNet.forward()
 
 		# draw face frame
 		cv2.rectangle(frame,

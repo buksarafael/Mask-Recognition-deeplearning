@@ -3,7 +3,6 @@ import numpy as np
 from cv2.dnn import blobFromImage, readNetFromCaffe
 from cv2 import resize
 
-
 class FaceDetectorException(Exception):
     """default exception
     """

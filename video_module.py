@@ -1,5 +1,6 @@
 # import the necessary packages
-from imutils.video import VideoStream
+import torch
+from imutils.video import VideoStream, FPS
 import numpy as np
 import argparse
 import imutils
@@ -7,6 +8,11 @@ import time
 import cv2
 
 # construct the argument parse and parse the arguments
+from torchvision.transforms import Compose, ToPILImage, Resize, ToTensor
+
+from face_detector import FaceDetector
+from model_define import DetectorTrainer
+
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True, help="path to Caffe 'deploy' prototxt file")
 ap.add_argument("-m", "--model", required=True, help="path to Caffe pre-trained model")
@@ -23,7 +29,25 @@ time.sleep(2.0)
 
 #raspberry pi
 #vs = VideoStream(usePiCamera=True).start()
+"""
+model = DetectorTrainer()
+model.load_state_dict(torch.load(model_path)['state_dict'], strict=False)
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+model.eval()
+
+faceDetector = FaceDetector(
+	prototype='checkpoints/deploy.prototxt.txt',
+	model='checkpoints/res10_300x300_ssd_iter_140000.caffemodel'
+)
+
+transformations = Compose([
+	ToPILImage(),
+	Resize((100, 100)),
+	ToTensor()
+])
+"""
 # loop over the frames from the video stream
 while True:
 	# grab the frame from the threaded video stream and resize it

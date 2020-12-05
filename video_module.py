@@ -21,8 +21,8 @@ from model_define import DetectorTrainer
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True, help="path to Caffe 'deploy' prototxt file")
-ap.add_argument("-m", "--image", required=True, help="path to Caffe pre-trained model")
-ap.add_argument("-m2", "--model", required=True, type=str, help="path to Tensoflow model")
+ap.add_argument("-i", "--image", required=True, help="path to Caffe pre-trained model")
+ap.add_argument("-m", "--model", required=True, type=str, help="path to Tensoflow model")
 ap.add_argument("-c", "--confidence", type=float, default=0.5,help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
 
@@ -34,7 +34,7 @@ labelColor = [(10, 0, 255), (10, 255, 0)]
 
 # load our serialized model from disk
 print("[INFO] loading model...")
-maskNet = load_model(args["model2"])
+maskNet = load_model(args["model"])
 
 # initialize the video stream and allow the camera sensor to warmup
 print("[INFO] starting video stream...")

@@ -35,7 +35,7 @@ transformations = Compose([
 ])
 
 font = cv2.FONT_HERSHEY_SIMPLEX
-labels = ['No mask', 'Mask']
+labels = ['Mask Off', 'Mask On']
 labelColor = [(10, 0, 255), (10, 255, 0)]
 
 # load our serialized model from disk
@@ -51,7 +51,7 @@ while True:
 	# grab the frame from the threaded video stream and resize it
 	# to have a maximum width of 400 pixels
 	frame = vs.read()
-	frame = imutils.resize(frame, width=400)
+	frame = imutils.resize(frame, width=600)
 	faces = face_detector.detect(frame)
 
 	# loop over the detections

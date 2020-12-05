@@ -33,7 +33,7 @@ labelColor = [(10, 0, 255), (10, 255, 0)]
 
 # load our serialized model from disk
 print("[INFO] loading model...")
-maskNet = load_model("checkpoints/mask_detector1k.model")
+maskNet = load_model("checkpoints/mask_detector.model")
 
 # initialize the video stream and allow the camera sensor to warmup
 print("[INFO] starting video stream...")

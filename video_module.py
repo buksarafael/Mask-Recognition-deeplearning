@@ -4,7 +4,6 @@
 # import the necessary packages
 import os
 from pathlib import Path
-
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
@@ -22,8 +21,8 @@ from model_define import DetectorTrainer
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True, help="path to Caffe 'deploy' prototxt file")
-ap.add_argument("-m", "--model", required=True, help="path to Caffe pre-trained model")
-ap.add_argument("-m2", "--model2", required=True, help="path to Tensoflow model")
+ap.add_argument("-m", "--image", required=True, help="path to Caffe pre-trained model")
+ap.add_argument("-m2", "--model", required=True, type=str, help="path to Tensoflow model")
 ap.add_argument("-c", "--confidence", type=float, default=0.5,help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
 

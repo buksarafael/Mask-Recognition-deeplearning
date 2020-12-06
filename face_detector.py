@@ -17,7 +17,7 @@ class FaceDetector:
             raise FaceDetectorException("must specify prototype '.prototxt.txt' file ""path")
         if self.model is None:
             raise FaceDetectorException("must specify model '.caffemodel' file path")
-        self.classifier = readNetFromCaffe(str(prototype), str(model))
+        self.classifier = readNetFromCaffe(prototype, model)
 
     def detect(self, image):
         net = self.classifier

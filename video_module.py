@@ -38,9 +38,11 @@ labelColor = [(10, 0, 255), (10, 255, 0)]
 # load our serialized model from disk
 print("[INFO] loading model...")
 
-# initialize the video stream and allow the cammera sensor to warmup
+# initialize the video stream and allow the camera sensor to warmup
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
+#vs = VideoStream(usePiCamera=True).start()
+
 time.sleep(2.0)
 
 # loop over the frames from the video stream
